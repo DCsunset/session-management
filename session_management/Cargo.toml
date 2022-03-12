@@ -7,4 +7,6 @@ edition = "2021"
 
 [dependencies]
 actix-web = "3"
-
+rand="0.8.5"
+tarpc = "0.27"
+futures = "0.3"
