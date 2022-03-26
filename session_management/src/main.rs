@@ -31,37 +31,11 @@ impl TokenServer {
     pub fn get_token(&mut self) {
         let token = self.token_generator();
     }
-
-    pub fn hello() -> impl Responder {
-        HttpResponse::Ok().body("Hello world!")
-    }
-
-    pub fn echo(req_body: String) -> impl Responder {
-        HttpResponse::Ok().body(req_body)
-    }
-
-    pub async fn manual_hello(&self) -> impl Responder {
-        HttpResponse::Ok().body("Hey there!")
-    }
 }
 
 
 #[get("/")]
 async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    let rand_token: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(30)
-        .map(char::from)
-        .collect();
-    HttpResponse::Ok().body(rand_token)
-}
-
-async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey there!")
 }
 
@@ -83,30 +57,26 @@ async fn login(mut data: web::Data<TokenServer>) -> String {
 async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
     let mut tokens_copy = data.tokens.lock().unwrap();
 
-    if ((*tokens_copy).contains(&req_body)) {
+    if (*tokens_copy).contains(&req_body) {
         format!("Success!")
     }
     else {
         format!("Failed!")
     }
-
 }
 
 
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
     let server = web::Data::new(TokenServer {
         tokens: Mutex::new(vec![]),
     });
-
 
     HttpServer::new(move || {
         App::new()
             .app_data(server.clone())
             .service(hello)
-            .service(echo)
             .service(login)
             .service(verify)
     })
