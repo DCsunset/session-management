@@ -1,7 +1,5 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{post, web, App, HttpServer};
 use rand::{thread_rng, Rng};
-use std::sync::Mutex;
-use std::collections::HashSet;
 use rand::distributions::Alphanumeric;
 use chord_dht::{
 	client::setup_client
@@ -52,7 +50,7 @@ async fn login(data: web::Data<ChordDht>) -> String {
         .map(char::from)
         .collect();
 
-		data.insert(rand_token.clone());
+		data.insert(rand_token.clone()).await;
     format!("Hello {}!", rand_token)
 }
 
