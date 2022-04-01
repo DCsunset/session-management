@@ -1,16 +1,18 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use rand::{thread_rng, Rng};
+use std::hash::Hash;
 use std::sync::Mutex;
+use std::collections::HashSet;
 use rand::distributions::Alphanumeric;
 
 pub struct TokenServer {
-    tokens: Mutex<Vec<String>>
+    tokens: Mutex<HashSet<String>>
 }
 
 impl TokenServer {
     pub fn new() -> TokenServer {
         TokenServer {
-            tokens: Mutex::new(Vec::new())
+            tokens: Mutex::new(HashSet::new())
         }
     }
 
@@ -23,7 +25,7 @@ impl TokenServer {
             .collect();
 
         let token_copy = rand_token.clone();
-        self.tokens.get_mut().unwrap().push(rand_token);
+        self.tokens.get_mut().unwrap().insert(rand_token);
 
         return token_copy;
     }
@@ -49,7 +51,7 @@ async fn login(mut data: web::Data<TokenServer>) -> String {
 
     let mut tokens_copy = data.tokens.lock().unwrap();
     let rand_token_copy = rand_token.clone();
-    tokens_copy.push(rand_token);
+    tokens_copy.insert(rand_token);
     format!("Hello {}!", rand_token_copy)
 }
 
@@ -70,7 +72,7 @@ async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let server = web::Data::new(TokenServer {
-        tokens: Mutex::new(vec![]),
+        tokens: Mutex::new(HashSet::new()),
     });
 
     HttpServer::new(move || {
