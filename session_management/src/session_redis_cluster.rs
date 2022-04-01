@@ -1,4 +1,3 @@
-extern crate redis;
 use redis::Commands;
 use redis::RedisResult;
 use redis::cluster::ClusterClient;

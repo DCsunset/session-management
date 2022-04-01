@@ -1,5 +1,3 @@
-mod redis_example;
-
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use rand::{thread_rng, Rng};
 use std::sync::Mutex;

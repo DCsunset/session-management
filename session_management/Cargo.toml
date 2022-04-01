@@ -7,6 +7,16 @@ edition = "2021"
 
 [dependencies]
 actix-web = "3"
-rand="0.8.5"
+rand = "0.8.5"
 tarpc = "0.27"
 futures = "0.3"
+redis = { version = "0.21", features = ["cluster"] }
+
+
+[[bin]]
+name = "session_basic"
+path = "src/session_basic.rs"
+
+[[bin]]
+name = "session_redis_cluster"
+path = "src/session_redis_cluster.rs"
