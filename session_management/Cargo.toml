@@ -11,11 +11,17 @@ rand = "0.8.5"
 tarpc = "0.27"
 futures = "0.3"
 redis = { version = "0.21", features = ["cluster"] }
+async-trait = "0.1"
+chord-dht = { path = "../../chord-dht" }
 
 
 [[bin]]
 name = "session_basic"
 path = "src/session_basic.rs"
+
+[[bin]]
+name = "session_chord_dht"
+path = "src/session_chord_dht.rs"
 
 [[bin]]
 name = "session_redis_cluster"
