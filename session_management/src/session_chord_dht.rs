@@ -12,10 +12,11 @@ pub struct ChordDht {
 }
 
 impl ChordDht {
-	pub async fn new(server_addr: &str) -> Self {
-		Self {
-			client: setup_client(server_addr).await
-		}
+	pub async fn new(server_addr: &str) -> anyhow::Result<Self> {
+		let client = setup_client(server_addr).await?;
+		Ok(Self {
+			client: client
+		})
 	}
 }
 
@@ -66,10 +67,9 @@ async fn verify(req_body: String, data: web::Data<ChordDht>) -> String {
 
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-	let server = web::Data::new(
-		ChordDht::new("localhost:9600")
-	);
+async fn main() -> anyhow::Result<()> {
+	let dht = ChordDht::new("localhost:9600").await?;
+	let server = web::Data::new(dht);
 
 	HttpServer::new(move || {
 			App::new()
@@ -79,5 +79,7 @@ async fn main() -> std::io::Result<()> {
 	})
 	.bind("127.0.0.1:8080")?
 	.run()
-	.await
+	.await?;
+
+	Ok(())
 }
