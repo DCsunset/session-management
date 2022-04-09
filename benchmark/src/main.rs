@@ -1,14 +1,13 @@
 #![deny(warnings)]
 
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 use tokio::task;
 use std::io::prelude::*;
 use std::fs::OpenOptions;
 
 async fn process(path: &str, thread_num: i32) {
     let client = reqwest::Client::new();
-    let mut total_duation = Duration::new(0, 0);
-    let num_of_trials = 10;
+    let num_of_trials = 100;
     let thread_path = path.to_string();
     let thread_str = thread_num.to_string();
 
@@ -22,13 +21,11 @@ async fn process(path: &str, thread_num: i32) {
     for _number in 0..num_of_trials {
         let start = Instant::now();
         let _res = client.post("http://localhost:8080/login")
-        .body("0cxRnyQ0YqPP45TzcHFFxEX97Uekj")
         .send()
         .await;
 
         let duration = start.elapsed();
         file.write(format!("{:?} ", duration).as_bytes()).unwrap();
-        total_duation += duration;
     }
 
     file.write("\n".as_bytes()).unwrap();
