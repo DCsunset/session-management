@@ -6,7 +6,7 @@ First, create a docker bridge:
 docker network create --subnet 172.18.100.0/24 mariadb_net
 ```
 
-Next, modify the config file for each node.
+Next, modify the config file for each node (make sure the owner is 999).
 
 Then, start the node by its number (1, 2, 3):
 
