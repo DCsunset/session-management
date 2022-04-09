@@ -1,88 +1,83 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
+use std::collections::HashSet;
 use std::hash::Hash;
 use std::sync::Mutex;
-use std::collections::HashSet;
-use rand::distributions::Alphanumeric;
 
 pub struct TokenServer {
-    tokens: Mutex<HashSet<String>>
+	tokens: Mutex<HashSet<String>>,
 }
 
 impl TokenServer {
-    pub fn new() -> TokenServer {
-        TokenServer {
-            tokens: Mutex::new(HashSet::new())
-        }
-    }
+	pub fn new() -> TokenServer {
+		TokenServer {
+			tokens: Mutex::new(HashSet::new()),
+		}
+	}
 
-    pub fn token_generator(&mut self) -> String {
+	pub fn token_generator(&mut self) -> String {
+		let rand_token: String = thread_rng()
+			.sample_iter(&Alphanumeric)
+			.take(30)
+			.map(char::from)
+			.collect();
 
-        let rand_token: String = thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(30)
-            .map(char::from)
-            .collect();
+		let token_copy = rand_token.clone();
+		self.tokens.get_mut().unwrap().insert(rand_token);
 
-        let token_copy = rand_token.clone();
-        self.tokens.get_mut().unwrap().insert(rand_token);
+		return token_copy;
+	}
 
-        return token_copy;
-    }
-
-    pub fn get_token(&mut self) {
-        let token = self.token_generator();
-    }
+	pub fn get_token(&mut self) {
+		let token = self.token_generator();
+	}
 }
-
 
 #[get("/")]
 async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
+	HttpResponse::Ok().body("Hey there!")
 }
 
 #[post("/login")]
 async fn login(mut data: web::Data<TokenServer>) -> String {
-    let rand_token: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(30)
-        .map(char::from)
-        .collect();
+	let rand_token: String = thread_rng()
+		.sample_iter(&Alphanumeric)
+		.take(30)
+		.map(char::from)
+		.collect();
 
-    let mut tokens_copy = data.tokens.lock().unwrap();
-    let rand_token_copy = rand_token.clone();
-    tokens_copy.insert(rand_token);
-    format!("Hello {}!", rand_token_copy)
+	let mut tokens_copy = data.tokens.lock().unwrap();
+	let rand_token_copy = rand_token.clone();
+	tokens_copy.insert(rand_token);
+	format!("Hello {}!", rand_token_copy)
 }
 
 #[post("/verify")]
 async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
-    let mut tokens_copy = data.tokens.lock().unwrap();
+	let mut tokens_copy = data.tokens.lock().unwrap();
 
-    if (*tokens_copy).contains(&req_body) {
-        format!("Success!")
-    }
-    else {
-        format!("Failed!")
-    }
+	if (*tokens_copy).contains(&req_body) {
+		format!("Success!")
+	} else {
+		format!("Failed!")
+	}
 }
-
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let server = web::Data::new(TokenServer {
-        tokens: Mutex::new(HashSet::new()),
-    });
+	let server = web::Data::new(TokenServer {
+		tokens: Mutex::new(HashSet::new()),
+	});
 
-    HttpServer::new(move || {
-        App::new()
-            .app_data(server.clone())
-            .service(hello)
-            .service(login)
-            .service(verify)
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
+	HttpServer::new(move || {
+		App::new()
+			.app_data(server.clone())
+			.service(hello)
+			.service(login)
+			.service(verify)
+	})
+	.bind("127.0.0.1:8080")?
+	.run()
+	.await
 }
