@@ -90,7 +90,7 @@ async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let original_url: &str = "mysql://admin:password@localhost:3306/session_rust";
+    let original_url: &str = "mysql://root@localhost:3901/session_rust";
     let original_pool = Pool::new(Opts::from_url(original_url).unwrap()).unwrap();
     let mut original_connection = original_pool.get_conn().unwrap();
 
