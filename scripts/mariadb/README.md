@@ -16,6 +16,17 @@ Then, start the node by its number (1, 2, 3):
 
 (1 means master node)
 
+
+## Init database
+
+To initialize it:
+
+```
+docker exec -it mariadb1 mysql -u root -pcluster_password
+create database session_rust;
+exit
+```
+
 ## Acknowledgement
 
 Inspired by <https://github.com/hweidner/galera-docker>
