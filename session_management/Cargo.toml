@@ -10,6 +10,7 @@ actix-web = "4"
 rand = "0.8.5"
 tarpc = "0.27"
 futures = "0.3"
+mysql = "22.1"
 anyhow = "1.0"
 redis = { version = "0.21", features = ["cluster"] }
 async-trait = "0.1"
@@ -27,3 +28,7 @@ path = "src/session_chord_dht.rs"
 [[bin]]
 name = "session_redis_cluster"
 path = "src/session_redis_cluster.rs"
+
+[[bin]]
+name = "session_mariadb"
+path = "src/session_mariadb.rs"
