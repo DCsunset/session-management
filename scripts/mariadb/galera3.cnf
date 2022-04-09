@@ -1,0 +1,15 @@
+[mysqld]
+binlog_format=ROW
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+innodb_flush_log_at_trx_commit=2
+innodb_doublewrite=1
+wsrep_on=ON
+wsrep_provider=/usr/lib/libgalera_smm.so
+wsrep_sst_method=rsync
+
+# Modify the address here
+wsrep_cluster_address = "gcomm://172.18.100.1,172.18.100.2,172.18.100.3"
+wsrep_cluster_name    = "galera-cluster"
+wsrep_node_name       = "node3"
+wsrep_node_address    = "172.18.100.3"
