@@ -32,9 +32,9 @@ async fn verify(req_body: String, data: web::Data<TokenServer>) -> String {
 	let tokens_copy = data.tokens.lock().unwrap();
 
 	if (*tokens_copy).contains(&req_body) {
-		format!("Success!")
+		format!("success")
 	} else {
-		format!("Failed!")
+		format!("failure")
 	}
 }
 

@@ -82,7 +82,7 @@ async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
 		.unwrap();
 
 	if let Some(_) = rv {
-		"successs".to_string()
+		"success".to_string()
 	} else {
 		"failure".to_string()
 	}

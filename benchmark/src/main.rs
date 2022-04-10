@@ -82,7 +82,7 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
             .await;
 
             let duration = start.elapsed();
-            assert_eq!(_res.unwrap().text().await.unwrap(), "Failed!".to_string());
+            assert_eq!(_res.unwrap().text().await.unwrap(), "failure".to_string());
             file.write(format!("{:?} ", duration).as_bytes()).unwrap();
         }
         else {
@@ -96,7 +96,7 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
             .await;
 
             let duration = start.elapsed();
-            assert_eq!(_res.unwrap().text().await.unwrap(), "Success!".to_string());
+            assert_eq!(_res.unwrap().text().await.unwrap(), "success".to_string());
             file.write(format!("{:?} ", duration).as_bytes()).unwrap();
         }
         
@@ -107,9 +107,9 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
 
 #[tokio::main]
 async fn main(){
-
-    let num_of_threads = 8;
-    let num_of_trials = 100;
+    let args: Vec<_> = std::env::args().collect();
+    let num_of_threads = args[1].parse().unwrap();
+    let num_of_trials = 1000;
     let mut handles_login = Vec::new();
     let path = "./experiment_data/";
 

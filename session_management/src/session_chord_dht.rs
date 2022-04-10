@@ -58,9 +58,9 @@ async fn login(data: web::Data<ChordDht>) -> String {
 #[post("/verify")]
 async fn verify(req_body: String, data: web::Data<ChordDht>) -> String {
 	if data.contains(req_body).await {
-		format!("Success!")
+		format!("success")
 	} else {
-		format!("Failed!")
+		format!("failure")
 	}
 }
 
