@@ -1,18 +1,18 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
-use redis::Client;
+use redis::cluster::ClusterClient;
 use redis::Commands;
 use redis::RedisResult;
 use std::sync::Mutex;
 
 pub struct TokenServer {
-	client: Mutex<redis::Client>,
-	conn: Mutex<redis::Connection>
+	client: Mutex<redis::cluster::ClusterClient>,
+	conn: Mutex<redis::cluster::ClusterConnection>
 }
 
 impl TokenServer {
-	pub fn new(client: redis::Client) -> TokenServer {
+	pub fn new(client: redis::cluster::ClusterClient) -> TokenServer {
 		let conn = client.get_connection().unwrap();
 		TokenServer {
 			client: Mutex::new(client),
@@ -28,12 +28,13 @@ impl TokenServer {
 			.collect();
 
 		let token_copy = rand_token.clone();
-		let tolen_return = token_copy.clone();
 
 		let mut conn = self.conn.lock().unwrap();
-		let _: () = conn.set(token_copy, "0").unwrap();
-
-		return tolen_return;
+		let rv: redis::RedisResult<()> = conn.set(token_copy, "0");
+		match rv {
+			Ok(_) => rand_token,
+			Err(_) => "".to_string()
+		}
 	}
 
 	pub fn verify_token(&self, token: String) -> bool {
@@ -61,7 +62,7 @@ async fn login(mut data: web::Data<TokenServer>) -> String {
 async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
 	let result = data.verify_token(req_body);
 	if result {
-		"successs".to_string()
+		"success".to_string()
 	} else {
 		"failure".to_string()
 	}
@@ -69,7 +70,7 @@ async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-	let client = redis::Client::open( "redis://127.0.0.1:4902/").unwrap();
+	let client = redis::cluster::ClusterClient::open(vec!["redis://127.0.0.1:4902/"]).unwrap();
 
 	let server = web::Data::new(TokenServer::new(client));
 
