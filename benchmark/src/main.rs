@@ -30,7 +30,7 @@ async fn test_login(path: &str, thread_num: i32, num_of_trials: i32) {
 
     for _number in 0..num_of_trials {
         let start = Instant::now();
-        let _res = client.post("http://localhost:8080/login")
+        let _res = client.post("http://10.10.0.1:8080/login")
         .send()
         .await;
 
@@ -76,7 +76,7 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
     for _number in 0..num_of_trials {
         if _number & 1 == 0 {
             let start = Instant::now();
-            let _res = client.post("http://localhost:8080/verify")
+            let _res = client.post("http://10.10.0.1:8080/verify")
             .body("fake_token")
             .send()
             .await;
@@ -90,7 +90,7 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
             let random_token = token_map.get(&index).unwrap().clone();
 
             let start = Instant::now();
-            let _res = client.post("http://localhost:8080/verify")
+            let _res = client.post("http://10.10.0.1:8080/verify")
             .body(random_token)
             .send()
             .await;
