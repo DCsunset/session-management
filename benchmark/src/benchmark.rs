@@ -1,5 +1,3 @@
-#![deny(warnings)]
-
 use std::time::{Instant};
 use tokio::task;
 use std::io::prelude::*;
@@ -82,8 +80,12 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
             .await;
 
             let duration = start.elapsed();
-            assert_eq!(_res.unwrap().text().await.unwrap(), "failure".to_string());
-            file.write(format!("{:?} ", duration).as_bytes()).unwrap();
+            if _res.unwrap().text().await.unwrap() != "failure" {
+                file.write("-1 ".to_string().as_bytes()).unwrap();
+            }
+            else {
+                file.write(format!("{:?} ", duration).as_bytes()).unwrap();
+            }
         }
         else {
             let index = rng.gen_range(1..token_map.len() as i32 + 1);
@@ -96,8 +98,12 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
             .await;
 
             let duration = start.elapsed();
-            assert_eq!(_res.unwrap().text().await.unwrap(), "success".to_string());
-            file.write(format!("{:?} ", duration).as_bytes()).unwrap();
+            if _res.unwrap().text().await.unwrap() != "success" {
+                file.write("-1 ".to_string().as_bytes()).unwrap();
+            }
+            else {
+                file.write(format!("{:?} ", duration).as_bytes()).unwrap();
+            }
         }
         
     }

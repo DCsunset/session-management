@@ -10,3 +10,12 @@ reqwest = { version = "0.11", features = ["json", "blocking"] }
 tokio = { version = "1", features = ["full"] }
 futures = "0.3"
 rand = "0.8"
+
+[[bin]]
+name = "benchmark"
+path = "src/benchmark.rs"
+
+[[bin]]
+name = "benchmark_failure"
+path = "src/benchmark_failure.rs"
+
