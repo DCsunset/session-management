@@ -33,9 +33,20 @@ async fn test_login(path: &str, thread_num: i32, num_of_trials: i32) {
         .await;
 
         let duration = start.elapsed();
-        let token_str = format!("{:?} \n", _res.unwrap().text().await);
+        let data = match _res {
+            Ok(r) => {
+                r.text().await
+            },
+            Err(_) => {
+                file.write(format!("-{:?} ", duration).as_bytes()).unwrap();
+                continue;
+            }
+        };
+
+        let token_str = format!("{:?} \n", data);
+
         if token_str.len() < 40 {
-            file.write("-1 ".as_bytes()).unwrap();
+            file.write(format!("-{:?} ", duration).as_bytes()).unwrap();
         }
         else {
             file.write(format!("{:?} ", duration).as_bytes()).unwrap();
@@ -83,14 +94,24 @@ async fn test_verify(path: &str, thread_num: i32, num_of_trials: i32) {
         .body(token)
         .send()
         .await;
-
         let duration = start.elapsed();
-        if _res.unwrap().text().await.unwrap() != "success" {
-            file.write("-1 ".to_string().as_bytes()).unwrap();
+
+        let data = match _res {
+            Ok(r) => {
+                r.text().await
+            },
+            Err(_) => {
+                file.write(format!("-{:?} ", duration).as_bytes()).unwrap();
+                continue;
+            }
+        };
+
+        if let Ok(v) = data {
+            if v == "success" {
+                file.write(format!("{:?} ", duration).as_bytes()).unwrap();
+            }
         }
-        else {
-            file.write(format!("{:?} ", duration).as_bytes()).unwrap();
-        }
+        file.write(format!("-{:?} ", duration).as_bytes()).unwrap();
         
     }
 
