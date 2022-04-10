@@ -1,2 +1,2 @@
 #!/bin/sh
-docker rm -f redis1 redis2 redis3 redis4 redis5 redis6 
+docker rm -f chord_dht_1 chord_dht_2 chord_dht_3
