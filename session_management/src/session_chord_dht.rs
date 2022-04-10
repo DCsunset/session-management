@@ -66,7 +66,7 @@ async fn verify(req_body: String, data: web::Data<ChordDht>) -> String {
 
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
-	let dht = ChordDht::new("localhost:9600").await?;
+	let dht = ChordDht::new("localhost:9602").await?;
 	let server = web::Data::new(dht);
 
 	HttpServer::new(move || {

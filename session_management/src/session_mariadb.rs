@@ -90,7 +90,7 @@ async fn verify(req_body: String, mut data: web::Data<TokenServer>) -> String {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-	let original_url: &str = "mysql://root@localhost:3901/session_rust";
+	let original_url: &str = "mysql://root@localhost:3902/session_rust";
 	let original_pool = Pool::new(Opts::from_url(original_url).unwrap()).unwrap();
 	let mut original_connection = original_pool.get_conn().unwrap();
 
@@ -114,7 +114,7 @@ async fn main() -> std::io::Result<()> {
 			.service(login)
 			.service(verify)
 	})
-	.bind("127.0.0.1:8080")?
+	.bind("0.0.0.0:8080")?
 	.run()
 	.await
 }
