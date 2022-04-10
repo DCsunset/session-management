@@ -22,7 +22,7 @@ Then, start the node by its number (1, 2, 3):
 To initialize it:
 
 ```
-docker exec -it mariadb1 mysql -u root -pcluster_password
+docker exec -it mariadb1 mysql -u root
 create database session_rust;
 exit
 ```

@@ -6,5 +6,3 @@ First, create a docker bridge:
 docker network create --subnet 172.18.101.0/24 redis_net
 ```
 
-
-
