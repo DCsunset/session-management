@@ -111,8 +111,7 @@ async fn main(){
     let num_of_threads = 8;
     let num_of_trials = 100;
     let mut handles_login = Vec::new();
-    let path = "C:\\Waterloo\\Class\\CS 654\\Project\\Research\\experiment_data\\";
-
+    let path = "./experiment_data/";
 
     for _num in 0..num_of_threads {
         let join_handle: task::JoinHandle<_> = tokio::spawn(async move {
